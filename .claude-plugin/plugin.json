@@ -1,0 +1,8 @@
+{
+  "name": "dev-workflow",
+  "description": "Project workflow engine: scaffolds living documentation (.claude/ files), orchestrates agent teams for batch task execution, and standardizes verification/wrap-up phases. Three modes: scaffold, execute, handoff.",
+  "author": {
+    "name": "Noam Shukroon"
+  },
+  "homepage": "https://github.com/noamshukroon/dev-workflow-plugin"
+}
