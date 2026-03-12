@@ -138,6 +138,13 @@ After all batches complete, run `/simplify` on all changed files. The code-simpl
 4. Update `.claude/TASKS.md` — check off completed items, update current status.
 5. `/revise-claude-md` — capture any learnings in project memory.
 6. Create or append to `.claude/LEARNINGS.md` — capture what worked and what didn't (see Skill Evolution below).
+7. **Clean up Claude Code's temporary directory** — remove the temp directory used during the session to avoid stale files accumulating:
+   ```bash
+   rm -rf "$(echo $TMPDIR)claude-code/"
+   ```
+   Also remove any workflow-generated temporary artifacts:
+   - `qa-screenshots/` — delete after confirming screenshots are no longer needed (ask user if unsure)
+   - Any leftover git worktree directories from parallel agent execution
 
 ---
 
