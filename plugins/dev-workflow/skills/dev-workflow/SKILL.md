@@ -1,259 +1,226 @@
 ---
 name: dev-workflow
-description: "Project workflow engine: scaffolds a living documentation system (.claude/ files), orchestrates agent teams for task execution, and standardizes verification/wrap-up phases. Use this skill whenever starting a new project (scaffold mode), executing a multi-task prompt (execute mode), handing off between sessions (handoff mode), or when the user mentions 'agent team', 'workflow', 'scaffold docs', 'project setup', or wants to organize work into parallel/sequential batches. Also trigger when the user asks to plan, batch, or coordinate multiple tasks — even if they don't name this skill explicitly."
+description: "Project workflow engine: scaffolds .claude/ docs, orchestrates agent teams, standardizes verification, supports session resume and doc audits. Trigger on: scaffold, execute, handoff, resume, audit, agent team, workflow, batch, project setup, or multi-task coordination."
 ---
 
 # Dev Workflow
 
-A reusable workflow engine for any project. Three modes:
+Five modes — detect from context, ask if unclear:
 
-1. **Scaffold** — set up a new project with living documentation
-2. **Execute** — run a batch of tasks using an agent team
-3. **Handoff** — prepare a session handoff prompt
-
-Detect which mode from context. If unclear, ask.
+1. **Scaffold** — set up living documentation
+2. **Execute** — batch tasks with agent teams
+3. **Handoff** — prepare session handoff
+4. **Resume** — catch up after a break
+5. **Audit** — check documentation health
 
 ---
 
 ## Mode 1: Scaffold
 
-Use when starting a new project or adding the documentation system to an existing one.
+### Step 0: Detect project context
+
+Introspect before creating files:
+
+1. **Project type** — check for `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `Gemfile`, `pom.xml`, etc.
+2. **Commands** — extract build/test/lint from manifest. Pre-fill CLAUDE.md Commands section.
+3. **Framework** — detect indicators (Next.js, FastAPI, Rails, etc.). Tailor CONVENTIONS.md — skip irrelevant sections.
+4. **Monorepo** — check for `workspaces`, `lerna.json`, `nx.json`. Note structure in ARCHITECTURE.md.
+5. **Existing docs** — check for README.md, CONTRIBUTING.md, existing .claude/. Incorporate, don't duplicate.
+
+### Scaffold size
+
+| Size | Files | Best for |
+|------|-------|----------|
+| **Minimal** | CLAUDE.md + ARCHITECTURE.md + TASKS.md | Small projects, CLIs, libraries (<10 source files) |
+| **Standard** | All 6 .claude/ files + CLAUDE.md | Most projects (default) |
+| **Full** | Standard + PROMPT-TEMPLATE.md | Multi-person/agent team workflows |
 
 ### Step 1: Create CLAUDE.md
 
-Create a `CLAUDE.md` in the project root. This is the entry point — every session starts by reading it. Include:
-
-- **Project name and one-line description**
-- **Hard constraints** (things Claude must never do — e.g., "don't touch migrations", "no new dependencies without asking")
-- **North star metric** (the one number that matters)
-- **Documentation table** mapping `.claude/` files to their contents
-- **"When to read what" table** mapping task types to which files to load
-- **Documentation evolution rules** (see `references/doc-evolution-rules.md`)
-- **Preferences** (coding style, communication style, tool usage)
-- **Commands** (dev server, build, lint, test, type-check)
-- **Git workflow** (branching strategy, commit conventions)
-
-Read `references/claude-md-template.md` for the full template.
+Read `references/claude-md-template.md` for the template. Include: project name, hard constraints, north star metric, documentation table, "when to read what" table, doc evolution rules (from `references/doc-evolution-rules.md`), preferences, commands, git workflow.
 
 ### Step 2: Create .claude/ files
 
-Create a `.claude/` directory with these files:
+Read `references/claude-docs-scaffold.md` for templates.
 
 | File | Purpose |
 |------|---------|
-| `ARCHITECTURE.md` | File tree with implementation status, directory layout, DB schema, entry flows, import conventions |
-| `CONVENTIONS.md` | Styling tokens, naming conventions, code patterns, state management, error handling, TypeScript rules, localization/i18n |
-| `DECISIONS.md` | Why choices were made, rejected alternatives, known tradeoffs. Include an `## Archived` section at the bottom. |
-| `TASKS.md` | Phase checklist, current status, session handoff prompt, common task recipes |
-| `CHANGELOG.md` | Audit trail — every documentation update gets a dated entry |
-| `TOOLS.md` | All installed plugins, skills, MCP servers, agents. Include a "When to Use What" quick-reference table. |
+| `ARCHITECTURE.md` | File tree, directory layout, DB schema, entry flows, imports |
+| `CONVENTIONS.md` | Styling, naming, code patterns, state, errors, types, i18n |
+| `DECISIONS.md` | Choices made, rejected alternatives, tradeoffs. `## Archived` at bottom |
+| `TASKS.md` | Phase checklist, status, handoff prompt, recipes |
+| `CHANGELOG.md` | Dated audit trail of doc updates |
+| `TOOLS.md` | Quick-reference table mapping tasks → tools. No tool descriptions (system loads those) |
 
-Read `references/claude-docs-scaffold.md` for templates of each file.
+### Step 3: Create PROMPT-TEMPLATE.md (full scaffold only)
 
-### Step 3: Create PROMPT-TEMPLATE.md
-
-Copy `references/prompt-template.md` to the project root. This is the reusable template for writing task prompts.
+Copy `references/prompt-template.md` to project root.
 
 ### Step 4: Verify
 
-- All 6 `.claude/` files exist and are populated
-- `CLAUDE.md` references all `.claude/` files in both tables
-- `PROMPT-TEMPLATE.md` exists at project root
-- Run a quick sanity check: does the "When to read what" table cover the common task types for this project?
+- All `.claude/` files for chosen size exist and are populated
+- CLAUDE.md references exactly the created files (no dangling refs)
+- Auto-detected commands actually work (run them)
+- "When to read what" table covers common task types
 
 ---
 
 ## Mode 2: Execute
 
-Use when given a batch of tasks to implement. This is the agent team orchestration pattern.
-
 ### Phase A — Analyze & Plan
 
-1. Read `CLAUDE.md` and the relevant `.claude/` files (use the "When to read what" table).
-2. List all tasks with their target files.
-3. Build a dependency graph — which tasks touch the same files?
-4. Group into batches:
+1. Read CLAUDE.md + relevant `.claude/` files. Check `.claude/LEARNINGS.md` if it exists.
+2. List tasks with target files. Build dependency graph.
+3. Group into batches:
 
-**Batch 1 — Independent fixes (parallel):**
-Tasks that touch different files with zero overlap. These are safe to run simultaneously.
-→ Use `superpowers: dispatching-parallel-agents` — one subagent per task.
+**Batch 1 — Independent fixes (parallel):** No file overlap → `superpowers: dispatching-parallel-agents`, one subagent per task.
 
-**Batch 2 — Feature work (sequential):**
-Tasks that share files or have logical dependencies. Must run in order.
-→ Use `/feature-dev` for multi-file features:
-  - `code-explorer` — trace existing patterns and data flow
-  - `code-architect` — design the approach before coding
-  - Implement one feature at a time
+**Batch 2 — Feature work (sequential):** Shared files/dependencies → `/feature-dev` (code-explorer → code-architect → implement).
 
-**Batch 3 — Cross-cutting concerns:**
-Tasks that touch many files with the same change (formatting, loading states, refactoring).
-→ Run sequentially after Batch 1 (to avoid merge conflicts with Batch 2).
+**Batch 3 — Cross-cutting concerns:** Many files, same change type → sequential after Batch 1.
 
-5. Write the plan using `superpowers: writing-plans`. Present batches clearly.
+4. Write plan using `superpowers: writing-plans`.
 
 ### Phase B — Execute batches
 
-Run batches in order (1 → 2 → 3, though 1 and 2 can overlap if no file conflicts).
+Run in order (1 → 2 → 3; 1 and 2 can overlap if no file conflicts).
 
-**For every task:**
-- Make the change
-- Run the project's build/lint/test commands
-- If it fails, fix before moving on
+**Per task:** make change → build/lint/test → checkpoint commit on pass → recovery tree on fail.
 
-**Tool selection per task type:**
+**Checkpoints:** `checkpoint: <batch>/<task> — <description>`. Lightweight commits on current branch. Squashed at wrap-up.
+
+**Recovery (on failure):**
+1. **Quick fix** (<5 min) → fix, verify, checkpoint, continue
+2. **Isolated** (doesn't block others) → `git stash`, log as skipped in TASKS.md, continue, revisit later
+3. **Cascading** (blocks downstream) → `git reset --soft` to last checkpoint, re-plan with failure as constraint, update DECISIONS.md
+4. **Wrong approach** → `git reset --soft` to batch start, ask user before continuing
+
+**Progress:** Between batches (and every 3+ tasks), print status: `--- Progress: 4/7 tasks | Batch 2 | 1 skipped ---`. Update TASKS.md in real-time.
+
+**Tool selection:**
 
 | Task type | Tool |
 |-----------|------|
-| Independent small fix | `superpowers: dispatching-parallel-agents` |
+| Independent fix | `superpowers: dispatching-parallel-agents` |
 | Multi-file feature | `/feature-dev` |
-| UI/styling work | `frontend-design` (auto-active) |
-| Library API lookup | `context7` ("use context7") |
-| Bug investigation | `superpowers: systematic-debugging` |
+| UI/styling | `frontend-design` (auto-active) |
+| Library API | `context7` |
+| Bug | `superpowers: systematic-debugging` |
 
 ### Phase C — Simplify
 
-After all batches complete, run `/simplify` on all changed files. The code-simplifier will:
-- Reduce unnecessary complexity/nesting
-- Consolidate related logic
-- Improve naming consistency
-- Eliminate redundant code
+Run `/simplify` on all changed files.
 
 ### Phase D — Verify
 
-1. **Build check**: Run the project's full verification commands (build + lint + type-check). All must pass clean.
-
-2. **Visual check** (if UI was changed): Use `claude-in-chrome`:
-   - `tabs_context_mcp` → `tabs_create_mcp` → navigate to the app
-   - Test at desktop viewport (1440×900) and mobile viewport (390×844)
-   - Walk through the verification checklist from the task prompt
-   - Take screenshots, save to `qa-screenshots/`
-
-3. **If anything fails**, fix it before proceeding. Use `superpowers: verification-before-completion` — evidence before assertions.
+1. **Build check**: full build + lint + type-check, all must pass.
+2. **Visual check** (UI changes only): `claude-in-chrome` → desktop (1440x900) + mobile (390x844) → screenshots to `qa-screenshots/`.
+3. Fix failures before proceeding. Use `superpowers: verification-before-completion`.
 
 ### Phase E — Wrap up
 
-1. `/code-review` — final quality pass on all changes.
-2. Update `.claude/CHANGELOG.md` — one dated entry summarizing what changed.
-3. Update `.claude/ARCHITECTURE.md` — if new files/components were added.
-4. Update `.claude/TASKS.md` — check off completed items, update current status.
-5. `/revise-claude-md` — capture any learnings in project memory.
-6. Create or append to `.claude/LEARNINGS.md` — capture actionable rules (see Skill Evolution below).
-7. **Documentation hygiene check** — if total `.claude/` lines > ~1,000 or a major phase just completed, run compression (see Documentation Hygiene section).
-8. **Clean up Claude Code's temporary directory** — remove the temp directory used during the session to avoid stale files accumulating:
-   ```bash
-   rm -rf "$(echo $TMPDIR)claude-code/"
-   ```
-   Also remove any workflow-generated temporary artifacts:
-   - `qa-screenshots/` — delete after confirming screenshots are no longer needed (ask user if unsure)
-   - Any leftover git worktree directories from parallel agent execution
+1. Squash `checkpoint:` commits into meaningful commits. Ask user for preferred granularity.
+2. `/code-review` on all changes.
+3. Update `.claude/CHANGELOG.md` — dated summary entry.
+4. Update `.claude/ARCHITECTURE.md` if new files/components added.
+5. Update `.claude/TASKS.md` — check off items, update status.
+6. `/revise-claude-md`.
+7. Append to `.claude/LEARNINGS.md` (see Skill Evolution below).
+8. Doc hygiene check if total `.claude/` lines >1000 or major phase completed (see `references/doc-evolution-rules.md`).
+9. Clean up: `rm -rf "$(echo $TMPDIR)claude-code/"`, remove `qa-screenshots/` (ask user), remove leftover worktrees.
 
 ---
 
 ## Mode 3: Handoff
 
-Use when preparing for a session break or context handoff.
-
-1. Read `.claude/TASKS.md` to get the current status.
-2. Generate a handoff prompt:
-
+1. Read `.claude/TASKS.md` for current status.
+2. Run `git status` and `git diff --stat` for uncommitted work.
+3. Generate handoff prompt:
 ```
-Read CLAUDE.md first — it contains hard constraints and a documentation map.
-Then read only the .claude/ files relevant to your task (see "When to read what" table).
-
-Current status: {{what was last completed}}
-Next up: {{what needs to happen next}}
-Context: {{any decisions made this session that aren't in docs yet}}
+Read CLAUDE.md first, then relevant .claude/ files (see "When to read what" table).
+Current status: {{last completed}}
+Next up: {{next tasks}}
+Blockers: {{unresolved decisions}}
+Uncommitted: {{modified files or "none"}}
+Context: {{session decisions not yet in docs}}
 ```
-
-3. Update `.claude/TASKS.md` with the latest status.
-4. Update `.claude/CHANGELOG.md` if any doc changes were made.
+4. Update TASKS.md with latest status.
+5. Update CHANGELOG.md if doc changes were made.
 
 ---
 
-## Documentation Evolution Rules
+## Mode 4: Resume
 
-These rules keep the `.claude/` system accurate as the project grows. They apply after every task.
-
-- **When to update**: After any task that changes project structure, conventions, or decisions — in the same session, not as a follow-up.
-- **When to create new files**: If a new major concern emerges that doesn't fit existing files (e.g., `.claude/API.md`, `.claude/TESTING.md`). Add to CLAUDE.md's documentation table.
-- **When to split files**: If any `.claude/` file exceeds ~200 lines, split by sub-concern.
-- **When to archive**: If a decision is no longer relevant, move to `## Archived` in DECISIONS.md with a date and reason.
-- **Changelog**: Every update gets a dated entry in CHANGELOG.md.
+1. Read `.claude/TASKS.md` for last status and next steps.
+2. `git log` since last CHANGELOG.md entry date. Summarize: commits, new branches/PRs, new/deleted files.
+3. Check for drift: ARCHITECTURE.md vs actual file tree, new deps not in docs, uncommitted/stashed changes.
+4. Present briefing:
+```
+Since last session ({{date}}):
+- {{N}} commits, {{N}} files changed
+- New: {{files/deps}}
+- Drift: {{doc/code mismatches}}
+- Next up: {{from TASKS.md}}
+```
+5. Fix small drift immediately. Flag larger updates for user decision.
 
 ---
 
-## Documentation Hygiene
+## Mode 5: Audit
 
-Run these checks periodically (every 5–10 sessions, or when total `.claude/` lines exceed ~1,000). Also run after any major phase completion.
+1. **Inventory** — list `.claude/` files with line counts and last-modified dates.
+2. **Cross-refs** — every file in CLAUDE.md tables exists; every `.claude/` file is referenced; "when to read what" covers common tasks.
+3. **Staleness** — ARCHITECTURE.md vs actual file tree; TASKS.md "in progress" items that are done; DECISIONS.md active items already shipped.
+4. **Line budget** — flag files >200 lines; report total.
+5. **Quality** — irrelevant CONVENTIONS.md sections for project type; old CHANGELOG entries to archive; unmarked graduated LEARNINGS.
+6. **Report**:
+```
+Doc Health: 6/6 files | 847/1000 lines
+Cross-refs: OK
+Stale: ARCHITECTURE.md missing 3 files
+Budget: CONVENTIONS.md at 210 lines
+Actions: [list fixes needed]
+```
+7. Apply small fixes (<5) directly. Present larger lists for user decision.
 
-### Compression strategies
-- **TOOLS.md**: Keep only a quick-reference table + project-specific notes. Tool/skill/plugin descriptions are loaded by the system automatically — don't duplicate them.
-- **TASKS.md**: Collapse completed phases into a summary table. Keep only the current and upcoming phases as full checklists.
-- **CHANGELOG.md**: Archive old session entries into a collapsed `<details>` block. Keep recent entries (last 5–10 sessions) visible.
-- **DECISIONS.md**: Move shipped/settled decisions to `## Archived` as compact one-liners (`- **Name** — one-line summary`). Keep only decisions that still constrain future work in the active section.
-- **LEARNINGS.md**: Remove narrative sections. Keep only categorized actionable rules. Mark graduated items (promoted to CLAUDE.md/CONVENTIONS.md) with ✅.
-- **CONVENTIONS.md**: Watch for duplication between sections (e.g., audit checklist items that repeat security section content). Deduplicate.
+---
 
-### Line budget
-Every `.claude/` file should stay under ~200 lines. If a file exceeds this, split or compress before adding more content. Total across all files should stay under ~1,000 lines.
+## Doc Evolution Rules
+
+Full rules in `references/doc-evolution-rules.md`. Summary:
+
+- Update after any task that changes structure, conventions, or decisions — same session.
+- Create new `.claude/` files when a concern doesn't fit existing ones. Add to CLAUDE.md tables.
+- Split at ~200 lines. Total under ~1000.
+- Archive shipped decisions as one-liners in DECISIONS.md `## Archived`.
+- Every update gets a CHANGELOG.md entry.
 
 ---
 
 ## Skill Evolution
 
-The skill improves with use. After every Execute run, capture what worked and what didn't so future runs benefit.
-
-### Per-project learnings file
-
-After Phase E (wrap-up), create or append to `.claude/LEARNINGS.md`. Use **categorized actionable rules**, not narratives:
+After Execute Phase E, append to `.claude/LEARNINGS.md`:
 
 ```markdown
-# Learnings
-
-Actionable rules for dev-workflow Execute runs. Read at Phase A to inform batch planning, tool selection, and verification.
-
----
-
-## Session N — {{task summary}}
-
+## Session N — {{summary}}
 ### Batch planning
-- **{{Rule}}** — {{why it matters}}
-
+- **{{Rule}}** — {{why}}
 ### Code hygiene
-- **{{Rule}}** — {{why it matters}}
-- ✅ **{{Graduated rule}}** → CLAUDE.md gotcha (or CONVENTIONS.md)
-
+- **{{Rule}}** — {{why}}
 ### Verification
-- **{{Rule}}** — {{why it matters}}
+- **{{Rule}}** — {{why}}
 ```
 
-**Format rules:**
-- Lead with the actionable rule in bold. Context follows on the same line.
-- Mark rules that have been promoted to CLAUDE.md/CONVENTIONS.md with ✅ — keep as cross-references only.
-- Categorize by concern (batch planning, code hygiene, verification), not by session narrative.
-- Do NOT use "What worked" / "What didn't work" sections — extract the adjustment directly.
-
-### Reading learnings
-
-At the start of every Execute run (Phase A), check if `.claude/LEARNINGS.md` exists. If it does, read it before planning batches. Use adjustments to inform:
-- Batch grouping (avoid past file-overlap mistakes)
-- Tool selection (if a tool caused issues, try alternatives)
-- Verification focus (if past runs missed things, add those checks)
-
-### Skill-level patterns
-
-If the same learning appears across 3+ projects, flag it to the user: "This adjustment has come up in multiple projects — want me to update the dev-workflow skill to include it by default?"
+Format: bold rule first, context after. Categorize by concern, not narrative. Mark graduated rules (promoted to CLAUDE.md/CONVENTIONS.md) with checkmark. At Phase A, read LEARNINGS.md before planning. If a learning recurs across 3+ projects, suggest updating this skill.
 
 ---
 
 ## Reference Files
 
-Read these when you need detailed templates or examples:
-
 | File | When to read |
 |------|-------------|
-| `references/claude-md-template.md` | Scaffolding a new CLAUDE.md |
-| `references/claude-docs-scaffold.md` | Creating `.claude/` files from scratch |
-| `references/prompt-template.md` | Writing a task prompt for agent team execution |
-| `references/doc-evolution-rules.md` | Detailed rules for keeping docs current |
-| `.claude/LEARNINGS.md` | Per-project learnings from past Execute runs — read at start of Phase A |
+| `references/claude-md-template.md` | Scaffolding CLAUDE.md |
+| `references/claude-docs-scaffold.md` | Creating .claude/ files |
+| `references/prompt-template.md` | Writing task prompts |
+| `references/doc-evolution-rules.md` | Detailed doc evolution + hygiene rules |
+| `.claude/LEARNINGS.md` | Start of Execute Phase A |

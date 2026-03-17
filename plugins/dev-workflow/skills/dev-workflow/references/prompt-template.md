@@ -1,58 +1,47 @@
-# Prompt Template — Task Handoff for Claude Code
+# Prompt Template — Task Handoff
 
-Copy this template when drafting a new task prompt. Fill in the `{{placeholders}}` and delete sections that don't apply.
-
----
+Fill in `{{placeholders}}`, delete unused sections.
 
 ## Setup
 
-Read `CLAUDE.md` first, then load the `.claude/` files relevant to this task (see the "When to read what" table in CLAUDE.md).
+Read `CLAUDE.md` first, then load relevant `.claude/` files per "When to read what" table.
 
 ## Tasks
 
-{{TASK_LIST — describe each task with:
-- ID (e.g., T1, T2, T3)
-- Title
-- File(s) involved
-- What to do (be specific — include exact values, strings, class names)
-- Size: S / M / L}}
+{{List each task:
+- **ID**: T1, T2, ...
+- **Title**: what to do
+- **Files**: affected files
+- **Details**: exact values, class names, specifics
+- **Size**: S / M / L}}
 
 ## Batching
 
-Analyze file overlap across the tasks above and group into batches:
+Analyze file overlap, group into batches:
 
-{{BATCHES — or use this default structure:}}
+**Batch 1 — Independent fixes (parallel):**
+{{No file overlap → `superpowers: dispatching-parallel-agents`.}}
 
-**Batch 1 — Independent quick fixes (parallel):**
-{{List tasks that touch different files with no overlap. Use `superpowers: dispatching-parallel-agents`.}}
+**Batch 2 — Feature work (sequential, /feature-dev):**
+{{Shared files/dependencies → code-explorer → code-architect → implement.}}
 
-**Batch 2 — Feature work (sequential, use /feature-dev):**
-{{List tasks that share files or depend on each other. Run code-explorer → code-architect → implement.}}
-
-**Batch 3 — Cross-cutting concerns:**
-{{List tasks that span many files (e.g., loading states, formatting, refactoring). Can run after Batch 1.}}
+**Batch 3 — Cross-cutting:**
+{{Many files, same change → sequential after Batch 1.}}
 
 ## Agent Instructions
 
-- **Batch 1**: Use `superpowers: dispatching-parallel-agents` — one subagent per fix. Each subagent makes the change and runs the build/lint commands.
-- **Batch 2**: Use `/feature-dev` — `code-explorer` traces existing patterns, `code-architect` designs the approach, then implement sequentially. Use `context7` for any library API questions. `frontend-design` is auto-active for UI work.
-- **Batch 3**: Implement sequentially, build/lint after each.
-- After all batches: run `/simplify` on changed files.
+- **Batch 1**: parallel subagents, each runs build/lint after change
+- **Batch 2**: `/feature-dev` sequential, `context7` for API lookups, `frontend-design` auto-active for UI
+- **Batch 3**: sequential, build/lint after each
+- **After all**: `/simplify` on changed files
 
 ## Verification
 
-1. Run the full build/lint/type-check suite — must pass clean.
-2. {{VISUAL_CHECKS — if UI changes, add claude-in-chrome verification:}}
-   - Start dev server if not running
-   - Use `claude-in-chrome`: `tabs_context_mcp` → `tabs_create_mcp` → navigate to app
-   - Desktop (1440×900): {{checklist}}
-   - Mobile (390×844): {{checklist}}
-   - Save screenshots to `qa-screenshots/`.
-3. If any check fails, fix before proceeding.
+1. Full build + lint + type-check — must pass.
+2. Visual (UI changes): `claude-in-chrome` → desktop 1440x900 + mobile 390x844 → screenshots to `qa-screenshots/`.
+3. Fix failures before proceeding.
 
 ## Wrap-up
 
-1. `/code-review` on all changes.
-2. Update `.claude/CHANGELOG.md` with a summary entry.
-3. Update `.claude/ARCHITECTURE.md` if new files/components were added.
-4. `/revise-claude-md` to capture learnings.
+1. `/code-review` all changes
+2. Update CHANGELOG.md, ARCHITECTURE.md (if new files), `/revise-claude-md`
