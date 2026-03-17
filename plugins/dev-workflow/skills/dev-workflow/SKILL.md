@@ -137,8 +137,9 @@ After all batches complete, run `/simplify` on all changed files. The code-simpl
 3. Update `.claude/ARCHITECTURE.md` — if new files/components were added.
 4. Update `.claude/TASKS.md` — check off completed items, update current status.
 5. `/revise-claude-md` — capture any learnings in project memory.
-6. Create or append to `.claude/LEARNINGS.md` — capture what worked and what didn't (see Skill Evolution below).
-7. **Clean up Claude Code's temporary directory** — remove the temp directory used during the session to avoid stale files accumulating:
+6. Create or append to `.claude/LEARNINGS.md` — capture actionable rules (see Skill Evolution below).
+7. **Documentation hygiene check** — if total `.claude/` lines > ~1,000 or a major phase just completed, run compression (see Documentation Hygiene section).
+8. **Clean up Claude Code's temporary directory** — remove the temp directory used during the session to avoid stale files accumulating:
    ```bash
    rm -rf "$(echo $TMPDIR)claude-code/"
    ```
@@ -181,42 +182,67 @@ These rules keep the `.claude/` system accurate as the project grows. They apply
 
 ---
 
+## Documentation Hygiene
+
+Run these checks periodically (every 5–10 sessions, or when total `.claude/` lines exceed ~1,000). Also run after any major phase completion.
+
+### Compression strategies
+- **TOOLS.md**: Keep only a quick-reference table + project-specific notes. Tool/skill/plugin descriptions are loaded by the system automatically — don't duplicate them.
+- **TASKS.md**: Collapse completed phases into a summary table. Keep only the current and upcoming phases as full checklists.
+- **CHANGELOG.md**: Archive old session entries into a collapsed `<details>` block. Keep recent entries (last 5–10 sessions) visible.
+- **DECISIONS.md**: Move shipped/settled decisions to `## Archived` as compact one-liners (`- **Name** — one-line summary`). Keep only decisions that still constrain future work in the active section.
+- **LEARNINGS.md**: Remove narrative sections. Keep only categorized actionable rules. Mark graduated items (promoted to CLAUDE.md/CONVENTIONS.md) with ✅.
+- **CONVENTIONS.md**: Watch for duplication between sections (e.g., audit checklist items that repeat security section content). Deduplicate.
+
+### Line budget
+Every `.claude/` file should stay under ~200 lines. If a file exceeds this, split or compress before adding more content. Total across all files should stay under ~1,000 lines.
+
+---
+
 ## Skill Evolution
 
 The skill improves with use. After every Execute run, capture what worked and what didn't so future runs benefit.
 
 ### Per-project learnings file
 
-After Phase E (wrap-up), create or append to `.claude/LEARNINGS.md` in the project:
+After Phase E (wrap-up), create or append to `.claude/LEARNINGS.md`. Use **categorized actionable rules**, not narratives:
 
 ```markdown
-## YYYY-MM-DD — {{task summary}}
+# Learnings
 
-### What worked
-- {{e.g., "Parallel batch of 7 independent fixes completed with zero conflicts"}}
-- {{e.g., "feature-dev explorer step caught a shared utility that avoided duplication"}}
+Actionable rules for dev-workflow Execute runs. Read at Phase A to inform batch planning, tool selection, and verification.
 
-### What didn't work
-- {{e.g., "Batch 2 and 3 had an unexpected file overlap in utils.ts — should have been in same batch"}}
-- {{e.g., "/simplify removed a comment that was actually important context"}}
+---
 
-### Adjustments for next time
-- {{e.g., "Always check lib/utils.ts for cross-batch overlap before dispatching"}}
-- {{e.g., "Add 'preserve annotation comments' rule to simplify pass"}}
+## Session N — {{task summary}}
+
+### Batch planning
+- **{{Rule}}** — {{why it matters}}
+
+### Code hygiene
+- **{{Rule}}** — {{why it matters}}
+- ✅ **{{Graduated rule}}** → CLAUDE.md gotcha (or CONVENTIONS.md)
+
+### Verification
+- **{{Rule}}** — {{why it matters}}
 ```
+
+**Format rules:**
+- Lead with the actionable rule in bold. Context follows on the same line.
+- Mark rules that have been promoted to CLAUDE.md/CONVENTIONS.md with ✅ — keep as cross-references only.
+- Categorize by concern (batch planning, code hygiene, verification), not by session narrative.
+- Do NOT use "What worked" / "What didn't work" sections — extract the adjustment directly.
 
 ### Reading learnings
 
-At the start of every Execute run (Phase A), check if `.claude/LEARNINGS.md` exists. If it does, read it before planning batches. Use past adjustments to inform:
+At the start of every Execute run (Phase A), check if `.claude/LEARNINGS.md` exists. If it does, read it before planning batches. Use adjustments to inform:
 - Batch grouping (avoid past file-overlap mistakes)
 - Tool selection (if a tool caused issues, try alternatives)
 - Verification focus (if past runs missed things, add those checks)
 
 ### Skill-level patterns
 
-If the same learning appears across 3+ projects, it's a pattern worth baking into the skill itself. Flag it to the user: "This adjustment has come up in multiple projects — want me to update the dev-workflow skill to include it by default?"
-
-The user can then use `/skill-creator` to update the global skill with the new pattern.
+If the same learning appears across 3+ projects, flag it to the user: "This adjustment has come up in multiple projects — want me to update the dev-workflow skill to include it by default?"
 
 ---
 

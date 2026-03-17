@@ -56,9 +56,10 @@ These docs are living documents. Follow these rules:
 
 - **Update after every task** that changes project structure, conventions, or decisions — in the same session.
 - **Create new files** if a new major concern emerges that doesn't fit existing files. Add to both tables above.
-- **Split files** if any `.claude/` file exceeds ~200 lines.
-- **Archive** irrelevant decisions in DECISIONS.md with a date and reason.
-- **Changelog**: Every documentation update gets a dated entry in `.claude/CHANGELOG.md`.
+- **Split at ~200 lines** by sub-concern. Total across all `.claude/` files should stay under ~1,000.
+- **Archive** shipped decisions in DECISIONS.md as compact one-liners.
+- **Log every doc update** in `.claude/CHANGELOG.md`. Archive old entries in collapsed `<details>` blocks.
+- **Keep README.md current** — update when phases complete, stack changes, or setup instructions change.
 
 ## Preferences
 

@@ -66,3 +66,15 @@ Group related changes under a single date+session header. Be specific about what
 - The project structure changes significantly
 
 The README should reflect the current working state, not aspirational features. Mark upcoming features as "planned" with their phase number.
+
+## Periodic hygiene
+
+Run every 5–10 sessions or when total `.claude/` lines exceed ~1,000:
+
+1. **TOOLS.md** — Remove tool descriptions (system loads them). Keep only quick-reference table + project-specific notes.
+2. **TASKS.md** — Collapse completed phases into a summary table. Keep only current + upcoming phases as full checklists.
+3. **CHANGELOG.md** — Archive old entries into a collapsed `<details>` block.
+4. **DECISIONS.md** — Move shipped decisions to `## Archived` as compact one-liners.
+5. **LEARNINGS.md** — Remove narratives. Keep categorized actionable rules. Mark graduated items with ✅.
+6. **CONVENTIONS.md** — Deduplicate items that appear in multiple sections.
+7. **All files** — Must stay under ~200 lines each. Total under ~1,000.

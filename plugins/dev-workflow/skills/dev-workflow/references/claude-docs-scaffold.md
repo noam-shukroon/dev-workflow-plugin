@@ -93,6 +93,8 @@ project-root/
 
 ## DECISIONS.md
 
+Keep only decisions that still constrain future work in the active section. Archive shipped/settled ones as compact one-liners.
+
 ```markdown
 # Decisions & Tradeoffs
 
@@ -101,8 +103,10 @@ project-root/
 
 ## Archived
 
-<!-- Moved here when no longer relevant.
-     Format: ## [Title] (archived YYYY-MM-DD — [reason]) -->
+Shipped decisions — reflected in the codebase, no longer constraining future work. Archived {{date}}.
+
+- **{{Decision}}** — {{one-line summary}}
+- **{{Decision}}** — {{one-line summary}}
 ```
 
 ---
@@ -133,11 +137,16 @@ Copy this into the first message of every new Claude session:
 
 ## Phase Checklist
 
-### Phase 1 · {{Name}} ({{Timeline}})
-- [ ] {{Task}}
-- [ ] {{Task}}
+### Completed Phases (summary)
 
-### Phase 2 · {{Name}} ({{Timeline}})
+{{As phases complete, collapse their full checklists into a summary table:}}
+
+| Phase | What shipped | Sessions |
+|-------|-------------|----------|
+| **1 · {{Name}}** | {{2-3 word summary}} | {{session numbers}} |
+
+### Phase N · {{Name}}
+- [ ] {{Task}}
 - [ ] {{Task}}
 
 ## Common Task Recipes
@@ -151,43 +160,42 @@ Copy this into the first message of every new Claude session:
 
 ## TOOLS.md
 
+Tool/skill/plugin descriptions are loaded by the system automatically. TOOLS.md should contain **only** a quick-reference table mapping tasks to tools, plus project-specific usage notes. Do NOT duplicate tool descriptions here.
+
 ```markdown
-# Tools — Plugins, Skills & MCP Servers
+# Tools
 
-## Plugins
-
-### {{plugin-name}}
-**What it does**: {{description}}
-**Skill/Command**: {{how to trigger}}
-**When to use**: {{specific scenarios}}
-
-## MCP Servers
-
-### {{server-name}}
-**Status**: Connected
-**What it does**: {{description}}
-**Key tools**: {{list main tools}}
-
-## When to Use What
+## Quick Reference
 
 | Task | Tool |
 |------|------|
 | {{task type}} | {{tool name}} |
+| {{task type}} | {{tool name}} |
+
+## Project-Specific Notes
+
+### {{tool-name}}
+{{Only document project-specific usage tips — e.g., which libraries to look up, gotchas specific to this project's setup. Skip generic descriptions.}}
 ```
 
 ---
 
 ## CHANGELOG.md
 
+Keep recent entries (last 5–10 sessions) visible. Archive older entries in a collapsed `<details>` block.
+
 ```markdown
 # Documentation Changelog
 
-## {{date}} (session 1 — project setup)
-- **CLAUDE.md**: Created with project details, hard constraints, documentation map.
-- **ARCHITECTURE.md**: Added entry flows, directory layout, DB schema.
-- **CONVENTIONS.md**: Added styling, code patterns, naming, localization.
-- **DECISIONS.md**: Documented initial design decisions.
-- **TASKS.md**: Added phase checklist and current status.
-- **TOOLS.md**: Documented all installed plugins, skills, MCP servers.
-- **CHANGELOG.md**: This entry.
+## {{date}} — {{short description}}
+- **{{File}}**: What changed and why.
+
+---
+
+<details>
+<summary>Archive: Sessions 1–N ({{date range}})</summary>
+
+{{Summarize archived sessions in 1–2 lines each, or group by phase.}}
+
+</details>
 ```
