@@ -22,9 +22,14 @@ After creating: add to CLAUDE.md documentation table + "when to read what" table
 
 ## When to split
 
-Any file >~200 lines → split by sub-concern. Examples:
-- `ARCHITECTURE.md` → + `SCHEMA.md`
-- `CONVENTIONS.md` → + `DESIGN.md`
+**After every `.claude/` file update**, do a quick bloat check:
+1. Count the `##` headings — if a file has 5+ top-level sections covering unrelated concerns, it's doing too much.
+2. Check if you'd need to read past unrelated content to find what you need — that's a sign the file mixes concerns.
+3. If either is true → split by sub-concern.
+
+Examples:
+- `ARCHITECTURE.md` has schema, imports, entry flows, and deployment topology → split `SCHEMA.md` and `DEPLOY.md` out
+- `CONVENTIONS.md` has styling, code patterns, API contracts, and error handling → split `DESIGN.md` or `API.md` out
 
 After splitting: update CLAUDE.md tables, add redirect note in original, log in CHANGELOG.
 
@@ -41,7 +46,7 @@ Decision no longer relevant → move to `## Archived` in DECISIONS.md with date 
 
 ## Periodic hygiene
 
-Every 5–10 sessions, or when total `.claude/` lines >~1,000:
+Run every 5–10 sessions, or when docs feel bloated:
 
 1. **TOOLS.md** — quick-reference table + project notes only
 2. **TASKS.md** — collapse completed phases to summary table
@@ -49,4 +54,4 @@ Every 5–10 sessions, or when total `.claude/` lines >~1,000:
 4. **DECISIONS.md** — archive shipped decisions as one-liners
 5. **LEARNINGS.md** — categorized rules only, mark graduated items ✅
 6. **CONVENTIONS.md** — deduplicate across sections
-7. All files under ~200 lines each, total under ~1,000
+7. **All files** — run the bloat check (5+ unrelated `##` sections → split)

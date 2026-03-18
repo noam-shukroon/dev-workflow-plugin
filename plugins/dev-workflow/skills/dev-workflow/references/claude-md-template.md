@@ -48,7 +48,7 @@ Never load all files speculatively.
 
 - Update after every task that changes structure/conventions/decisions — same session.
 - Create new `.claude/` files when needed. Add to both tables.
-- Split at ~200 lines. Total under ~1,000.
+- Split files that cover multiple distinct concerns.
 - Archive shipped decisions. Log every update in CHANGELOG.md.
 
 ## Preferences
