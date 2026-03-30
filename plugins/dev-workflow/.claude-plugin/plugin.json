@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "2.0.0",
-  "description": "Project workflow engine: scaffolds living documentation (.claude/ files), orchestrates agent teams for batch task execution, auto-splits large batches into subagent sessions, and standardizes verification/wrap-up phases. Modes: scaffold, execute, handoff, resume, audit.",
+  "version": "2.1.0",
+  "description": "Project workflow engine: scaffolds living documentation (.claude/ files), orchestrates agent teams for batch task execution, auto-splits large batches into subagent sessions, and standardizes verification/wrap-up phases. Modes: scaffold, execute, handoff, resume, audit, upgrade.",
   "author": {
     "name": "Noam Shukroon"
   },

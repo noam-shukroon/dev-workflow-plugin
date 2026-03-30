@@ -32,8 +32,9 @@ Detect from context. If unclear, ask.
 | **Handoff** | Preparing for a session break | See below |
 | **Resume** | Returning to a project after a break | See below |
 | **Audit** | Checking documentation health | `references/mode-audit.md` |
+| **Upgrade** | Upgrading .claude/ docs to latest plugin templates | `references/mode-upgrade.md` |
 
-After detecting the mode, read **only** that mode's reference file (for Scaffold/Execute/Audit), then follow its instructions.
+After detecting the mode, read **only** that mode's reference file (for Scaffold/Execute/Audit/Upgrade), then follow its instructions.
 
 ## Mode: Handoff
 
