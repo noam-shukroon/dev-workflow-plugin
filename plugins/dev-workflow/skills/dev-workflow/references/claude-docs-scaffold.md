@@ -1,6 +1,6 @@
 # .claude/ File Templates
 
-Fill in `{{placeholders}}`. Adapt sections to your project type — skip irrelevant ones.
+Fill in `{{placeholders}}`. Adapt to project type — skip irrelevant sections.
 
 ---
 
@@ -13,28 +13,19 @@ Fill in `{{placeholders}}`. Adapt sections to your project type — skip irrelev
 1. **{{Flow name}}**: `/path` → what happens → result
 
 ## Directory Layout
-
 Legend: ✅ implemented, 📁 scaffolded, 🔮 planned
 
 \```
 project-root/
-├── CLAUDE.md
-├── .claude/
-│   ├── ARCHITECTURE.md
-│   ├── CONVENTIONS.md
-│   ├── DECISIONS.md
-│   ├── TASKS.md
-│   ├── CHANGELOG.md
-│   └── TOOLS.md
 ├── {{source directories}}
 └── {{config files}}
 \```
 
 ## Database Schema
-{{Tables, columns, types, relationships — if applicable.}}
+{{Tables, relationships — if applicable.}}
 
 ## Import Conventions
-{{Import ordering, path aliases, barrel exports.}}
+{{Import ordering, path aliases.}}
 ```
 
 ---
@@ -45,31 +36,17 @@ project-root/
 # Conventions
 
 ## Styling
-- **Framework**: {{e.g., Tailwind CSS}}
-- **Approach**: {{e.g., Mobile-first}}
-- **Colors/Typography/Spacing**: {{design tokens}}
+{{Framework, approach, design tokens.}}
 
 ## Code Patterns
-
-### Component structure
-\```
-// Imports → Types → Component → Props → hooks → state → handlers → render
-\```
-
-### Naming
-- Files: {{kebab-case}}, Components: {{PascalCase}}, Vars: {{camelCase}}, DB: {{snake_case}}
-
-### State management
-{{Server state, client state, global state approach.}}
-
-### Error handling
-{{API error shape, user messages, validation.}}
-
-### TypeScript
-{{Strict mode, type generation, shared types location.}}
+- **Component structure**: Imports → Types → Component → hooks → handlers → render
+- **Naming**: Files: {{kebab}}, Components: {{Pascal}}, Vars: {{camel}}, DB: {{snake}}
+- **State**: {{Server/client/global approach.}}
+- **Errors**: {{API error shape, validation.}}
+- **TypeScript**: {{Strict mode, shared types location.}}
 
 ## Localization
-{{Language, RTL/LTR, currency, date/time format.}}
+{{Language, RTL/LTR, formats — if applicable.}}
 ```
 
 ---
@@ -93,11 +70,6 @@ project-root/
 ```markdown
 # Tasks
 
-## Session Handoff
-
-> Read CLAUDE.md first, then relevant .claude/ files per "When to read what" table.
-> Identify relevant files before starting. Prefer inline source comments over re-scanning docs.
-
 ## Current Status
 **Phase**: {{current}} | **Last**: {{completed}} | **Next**: {{upcoming}}
 
@@ -112,14 +84,13 @@ project-root/
 ## Common Recipes
 - **Add a page** → {{instructions}}
 - **Add a component** → {{instructions}}
-- **Add an API route** → {{instructions}}
 ```
 
 ---
 
 ## TOOLS.md
 
-Task → tool mapping only. System loads tool descriptions automatically.
+Task → tool mapping only. No descriptions (system loads those).
 
 ```markdown
 # Tools
@@ -147,6 +118,6 @@ Recent entries visible. Archive older ones in `<details>`.
 
 <details>
 <summary>Archive: Sessions 1–N</summary>
-{{1-2 lines per session or group by phase.}}
+{{1-2 lines per session.}}
 </details>
 ```

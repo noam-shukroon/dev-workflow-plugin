@@ -20,7 +20,7 @@ Built with {{tech stack}}. Hosted on {{hosting}}.
 
 ## Documentation
 
-All detailed docs in `.claude/`. Read only what you need — use the mapping below.
+All detailed docs in `.claude/`. Load only what you need per routing table below.
 
 | File | Contents |
 |------|----------|
@@ -31,29 +31,26 @@ All detailed docs in `.claude/`. Read only what you need — use the mapping bel
 | `.claude/CHANGELOG.md` | Audit trail of doc updates |
 | `.claude/TOOLS.md` | Task → tool mapping, project-specific tool notes |
 
-### When to read what
+### Context routing
 
-| Task involves… | Read |
-|---|---|
-| Components, layout, pages, routes | `ARCHITECTURE.md` |
-| Styling, colors, coding patterns | `CONVENTIONS.md` |
-| Understanding *why* something was built this way | `DECISIONS.md` |
-| Phase progress, recipes, handoff | `TASKS.md` |
-| DB schema, API routes | `ARCHITECTURE.md` |
-| Which tool for a task | `TOOLS.md` |
+| Task involves | Load |
+|---------------|------|
+| File structure, layout, DB, routes, new files | ARCHITECTURE.md |
+| Styling, naming, code patterns, types | CONVENTIONS.md |
+| Understanding *why* something was built this way | DECISIONS.md |
+| Phase progress, recipes, handoff | TASKS.md |
+| Which tool for a task | TOOLS.md |
 
 Never load all files speculatively.
 
-### Documentation Evolution
+### Doc evolution
 
-- Update after every task that changes structure/conventions/decisions — same session.
-- Create new `.claude/` files when needed. Add to both tables.
-- Split files that cover multiple distinct concerns.
-- Archive shipped decisions. Log every update in CHANGELOG.md.
+Update `.claude/` files after tasks that change structure/conventions/decisions. Log in CHANGELOG.md. Full rules in `.claude/` reference docs.
 
 ## Preferences
 
 - Use agent teams for multi-task work.
+- Respond concisely. No filler, no unnecessary politeness.
 - Ask before assuming when decisions could go multiple ways.
 - {{project-specific preferences}}
 
