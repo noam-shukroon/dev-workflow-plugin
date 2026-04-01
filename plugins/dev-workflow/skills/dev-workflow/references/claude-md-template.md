@@ -64,9 +64,27 @@ Update `.claude/` files after tasks that change structure/conventions/decisions.
 {{types}}   # Type check
 \```
 
+## Pre-Commit Checks
+
+Always run before committing:
+\```bash
+{{build}}   # Must pass
+{{test}}    # Must pass
+\```
+Never commit code that hasn't passed these checks.
+
+## Deployment Constraints
+
+- Platform: {{e.g., AWS Amplify, Vercel, Railway}}
+- Architecture: {{e.g., x64 — never add ARM-specific dependencies}}
+- {{Other constraints — e.g., no native binaries, max bundle size}}
+
 ## Git Workflow
 
 - Default branch: `main`
 - {{branching strategy}}
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `style:`, `chore:`
+- Push to the current branch only — never create new branches without explicit approval.
+- Never stage `.env*` files, credentials, or secrets.
+- Run `git status` + `git branch` before any git operation.
 ```

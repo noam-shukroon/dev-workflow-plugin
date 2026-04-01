@@ -9,6 +9,14 @@ description: "Project workflow engine: scaffolds .claude/ docs, orchestrates age
 
 - **Tone**: Concise. No filler, no unnecessary politeness. Cut wasted tokens.
 - **Parallelism**: Use agent teams (`superpowers: dispatching-parallel-agents`) for 2+ independent subtasks. Parallel over sequential, always.
+- **Git safety** (always active):
+  - Before any git operation: run `git status` + `git branch` to confirm state.
+  - Never create new branches without explicit user approval.
+  - Never stage `.env*` files, credentials, or secrets.
+  - Push to the current branch only — never switch branches silently.
+  - Never force push.
+- **Pre-commit verification**: Run the project's build and test commands before committing. Never commit code that hasn't passed both.
+- **Deployment awareness**: Check CLAUDE.md for deployment constraints before adding dependencies or platform-specific code. Warn if a change could break the deploy target.
 - **Context loading**: Read CLAUDE.md first. Then load ONLY the `.claude/` files needed:
 
 | Task involves | Load |

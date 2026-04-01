@@ -28,6 +28,10 @@ Run a batch of tasks using agent team orchestration.
 
 Run in order (1 → 2 → 3; overlap 1+2 if no file conflicts).
 
+**Pre-commit gate:** Every checkpoint commit requires build + tests to pass first. Never commit failing code.
+
+**Deployment check:** Before adding any dependency, check CLAUDE.md for deployment constraints (platform, architecture). Warn if a new dependency could cause environment mismatch (e.g., ARM64 binary on x64 deploy target).
+
 **Per task:** change → build/lint/test → checkpoint commit on pass → recovery on fail.
 
 **Checkpoints:** `checkpoint: <batch>/<task> — <description>`. Squashed at wrap-up.
@@ -40,6 +44,7 @@ Run in order (1 → 2 → 3; overlap 1+2 if no file conflicts).
 | Isolated | `git stash` → log skip in TASKS.md → continue → revisit |
 | Cascading | `git reset --soft` to checkpoint → re-plan → update DECISIONS.md |
 | Wrong approach | `git reset --soft` to batch start → ask user |
+| Wrong branch | `git stash` → switch to correct branch → `git stash pop` → continue |
 
 **Progress:** Every 3+ tasks: `--- Progress: 4/7 tasks | Batch 2 | 1 skipped ---`. Update TASKS.md live.
 
