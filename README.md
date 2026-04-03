@@ -2,7 +2,7 @@
 
 A Claude Code plugin that provides a reusable project workflow engine with git safety guardrails.
 
-**Version:** 3.0.0
+**Version:** 3.1.0
 
 ## What it does
 

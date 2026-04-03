@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "dev-workflow",
-  "version": "3.0.0",
-  "description": "Project workflow engine: scaffolds living documentation, orchestrates agent teams, auto-splits large batches into subagent sessions, standardizes verification/wrap-up phases. v3: hooks, framework templates, 6-phase verification, PRP workflow, git history analysis, language rules, role-based subagents, MCP health tracking.",
+  "version": "3.1.0",
+  "description": "Project workflow engine: scaffolds living documentation, orchestrates agent teams, auto-splits large batches into subagent sessions, standardizes verification/wrap-up phases. v3.1: token-optimized — consolidated agents, compressed hooks, task-sized workflow scaling, per-task security scanning, CI monitoring.",
   "owner": {
     "name": "Noam Shukroon"
   },
@@ -10,7 +10,7 @@
     {
       "name": "dev-workflow",
       "description": "Project workflow engine with scaffold, execute, handoff, resume, audit, and upgrade modes — smart context routing, auto-session orchestration, agent teams",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "source": "./plugins/dev-workflow",
       "category": "development"
     }

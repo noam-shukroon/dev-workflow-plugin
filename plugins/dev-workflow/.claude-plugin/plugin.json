@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Project workflow engine: scaffolds living documentation (.claude/ files), orchestrates agent teams for batch task execution, auto-splits large batches into subagent sessions, and standardizes verification/wrap-up phases. Includes ship, audit, and QA skills with git safety guardrails. v3: scaffold-generated hooks, framework-specific templates (Next.js/Go/Rust/FastAPI), 6-phase verification loop, PRP workflow, git history analysis, language-specific rules, role-based subagents, MCP health tracking. Modes: scaffold, execute, handoff, resume, audit, upgrade.",
   "author": {
     "name": "Noam Shukroon"
