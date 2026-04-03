@@ -21,6 +21,8 @@ All detailed docs in `.claude/`. Load only what you need per routing table below
 | File | Contents |
 |------|----------|
 | `.claude/ARCHITECTURE.md` | Plugin structure, directory layout, skill entry flows |
+| `.claude/CONVENTIONS.md` | Skill file structure, naming, markdown formatting, versioning |
+| `.claude/DECISIONS.md` | Why choices were made, rejected alternatives, tradeoffs |
 | `.claude/TASKS.md` | Current phase, upcoming work, session handoff |
 | `.claude/CHANGELOG.md` | Audit trail of doc updates |
 
@@ -29,16 +31,19 @@ All detailed docs in `.claude/`. Load only what you need per routing table below
 | Task involves | Load |
 |---------------|------|
 | File structure, adding skills, plugin layout | ARCHITECTURE.md |
+| Naming, file conventions, markdown formatting | CONVENTIONS.md |
+| Understanding *why* something was built this way | DECISIONS.md |
 | Phase progress, what's next, handoff | TASKS.md |
 
 Never load all files speculatively.
 
 ### Doc evolution
 
-Update `.claude/` files after tasks that change structure or decisions. Log in CHANGELOG.md.
+Update `.claude/` files after tasks that change structure, conventions, or decisions. Log in CHANGELOG.md. Full rules in `plugins/dev-workflow/skills/dev-workflow/references/doc-evolution-rules.md`.
 
 ## Preferences
 
+- Use agent teams for multi-task work.
 - Respond concisely. No filler.
 - Ask before assuming when decisions could go multiple ways.
 - Test skill markdown for completeness before shipping.

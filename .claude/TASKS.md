@@ -15,7 +15,6 @@
 ## Backlog
 - [ ] Publish plugin to Claude Code marketplace
 - [ ] Add automated skill validation (lint skill files for completeness)
-- [ ] Update README.md for v3.0.0 features
 
 ## Common Recipes
 - **Add a new skill** → Create `plugins/dev-workflow/skills/<name>/skill.md`, update plugin.json if needed, update README.md

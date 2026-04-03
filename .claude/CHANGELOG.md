@@ -1,5 +1,9 @@
 # Documentation Changelog
 
+## 2026-04-03 — Template upgrade
+- **CLAUDE.md**: Added agent teams preference, expanded doc evolution note with reference to `doc-evolution-rules.md`.
+- Previously in this session: added CONVENTIONS.md and DECISIONS.md to doc table and context routing; created both files; removed stale TASKS.md backlog item.
+
 ## 2026-04-03 — v3.0.0 feature expansion
 - **ARCHITECTURE.md**: Updated directory layout with 14 new reference files, updated entry flows and key relationships.
 - **TASKS.md**: Added v3.0.0 phase, updated backlog, added new recipes for hooks/agents/templates/rules.
