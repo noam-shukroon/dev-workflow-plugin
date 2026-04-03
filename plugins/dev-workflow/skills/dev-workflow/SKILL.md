@@ -85,6 +85,20 @@ Loaded by mode instructions — do not read speculatively.
 | File | Used by |
 |------|---------|
 | `references/claude-md-template.md` | Scaffold (CLAUDE.md creation) |
+| `references/claude-md-nextjs.md` | Scaffold (Next.js projects) |
+| `references/claude-md-go.md` | Scaffold (Go projects) |
+| `references/claude-md-rust.md` | Scaffold (Rust projects) |
+| `references/claude-md-fastapi.md` | Scaffold (FastAPI projects) |
 | `references/claude-docs-scaffold.md` | Scaffold (.claude/ file creation) |
+| `references/hooks-templates.md` | Scaffold (hook generation) |
+| `references/rules-typescript.md` | Scaffold (TypeScript conventions) |
+| `references/rules-go.md` | Scaffold (Go conventions) |
+| `references/rules-rust.md` | Scaffold (Rust conventions) |
+| `references/rules-python.md` | Scaffold (Python conventions) |
+| `references/agent-code-reviewer.md` | Audit, Execute Phase B |
+| `references/agent-security-reviewer.md` | Audit, Execute Phase B |
+| `references/agent-build-resolver.md` | Execute Phase B (build failures) |
+| `references/agent-performance-optimizer.md` | Audit, Execute Phase B |
+| `references/agent-doc-updater.md` | Execute Phase D, Audit |
 | `references/doc-evolution-rules.md` | Execute wrap-up, Audit |
 | `.claude/LEARNINGS.md` | Execute (Phase A, if exists) |
