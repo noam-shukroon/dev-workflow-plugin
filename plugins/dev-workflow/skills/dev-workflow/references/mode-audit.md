@@ -1,6 +1,6 @@
 # Mode: Audit
 
-Check the health and accuracy of `.claude/` documentation.
+Check the health and accuracy of `.claude/` documentation. For thorough review, also dispatch Code Reviewer and Doc Updater from `references/agents.md`.
 
 Run checks 1-5 as **parallel subagents** (`superpowers: dispatching-parallel-agents`). Merge results into report at step 6.
 

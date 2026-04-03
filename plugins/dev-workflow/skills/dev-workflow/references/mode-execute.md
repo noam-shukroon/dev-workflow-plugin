@@ -1,8 +1,10 @@
 # Mode: Execute
 
-Run a batch of tasks using agent team orchestration.
+Run a batch of tasks using agent team orchestration. Respect task sizing from SKILL.md — skip phases that don't apply.
 
 ## Phase A — Analyze & Plan
+
+_Skip for 1-task / ≤3-file work. Execute directly with build/test gate._
 
 1. Load context per routing table in SKILL.md. Check `.claude/LEARNINGS.md` if it exists.
 2. **Read PRD if present.** If `.claude/PRD.md` exists, use it to inform planning: validate tasks against requirements, flag gaps, ensure success metrics are addressable.
@@ -16,7 +18,7 @@ Run a batch of tasks using agent team orchestration.
    - **Batch 1 (parallel):** No file overlap → `superpowers: dispatching-parallel-agents`, one subagent per task.
    - **Batch 2 (sequential):** Shared files/dependencies → `/feature-dev` (code-explorer → code-architect → implement).
    - **Batch 3 (cross-cutting):** Many files, same change type → sequential after Batch 1.
-6. **Session scope check.** Split if: 8+ tasks, 3+ batches with visual verification, or 4+ unrelated areas.
+6. **Session scope check** (5+ tasks only). Split if: 8+ tasks, 3+ batches with visual verification, or 4+ unrelated areas.
 
    If splitting:
    - Group batches into sessions (max ~5 tasks each).
@@ -34,21 +36,23 @@ Run a batch of tasks using agent team orchestration.
 
 Run in order (1 → 2 → 3; overlap 1+2 if no file conflicts).
 
+**Pre-batch check:** `git fetch && git log HEAD..origin/$(git branch --show-current) --oneline`. If behind remote: warn user, suggest rebase before executing.
+
 **Pre-commit gate:** Every checkpoint commit requires build + tests to pass first. Never commit failing code.
 
-**Deployment check:** Before adding any dependency, check CLAUDE.md for deployment constraints (platform, architecture). Warn if a new dependency could cause environment mismatch (e.g., ARM64 binary on x64 deploy target).
+**Deployment check:** Before adding any dependency, check CLAUDE.md for deployment constraints (platform, architecture). Warn if a new dependency could cause environment mismatch.
 
-**Per task:** change → build/lint/test → checkpoint commit on pass → recovery on fail.
+**Per task:** change → build/lint/test → quick security scan → checkpoint commit on pass → recovery on fail.
 
-**Agent delegation:** For complex subtasks, delegate to role-based agents:
+**Security scan (per task):** After build/test pass, grep changed files for: hardcoded secrets (API keys, passwords, tokens), `eval()`, `innerHTML`, raw SQL string concatenation, `.env` references not in `.gitignore`. Flag immediately — don't defer to ship time.
 
-| Situation | Delegate to |
-|-----------|-------------|
-| Build/test failure during task | `references/agent-build-resolver.md` |
-| Security-sensitive changes (auth, crypto, input handling) | `references/agent-security-reviewer.md` |
-| Performance-critical paths (DB queries, hot loops, large data) | `references/agent-performance-optimizer.md` |
+**Agent delegation:** For complex subtasks, read `references/agents.md` and dispatch the relevant role as a subagent:
 
-Read the agent's reference file, then dispatch as a subagent with the relevant context.
+| Situation | Agent |
+|-----------|-------|
+| Build/test failure during task | Build Resolver |
+| Security-sensitive changes (auth, crypto, input handling) | Security Reviewer |
+| Performance-critical paths (DB queries, hot loops, large data) | Performance Optimizer |
 
 **Checkpoints:** `checkpoint: <batch>/<task> — <description>`. Squashed at wrap-up.
 
@@ -76,21 +80,33 @@ Read the agent's reference file, then dispatch as a subagent with the relevant c
 
 ## Phase C — Verify
 
-1. `/simplify` on changed files — parallel subagents per file group.
-2. Build + lint + type-check — all must pass.
-3. Visual check (UI only): `claude-in-chrome` → desktop (1440x900) + mobile (390x844). Screenshots to `qa-screenshots/`.
+Scale verification to match the work:
+
+1. Build + lint + type-check + test (always).
+2. `/simplify` on changed files — only if >100 lines changed or refactoring tasks.
+3. Visual check (UI changes only): `claude-in-chrome` → desktop (1440x900) + mobile (390x844). Screenshots to `qa-screenshots/`.
 4. Fix failures. Use `superpowers: verification-before-completion`.
 
 ## Phase D — Wrap-up
 
+Scale to task size:
+
+**Small (1-2 tasks, ≤5 files):** Update `.claude/TASKS.md` only. Skip other docs.
+
+**Medium (3-5 tasks):**
 1. Squash `checkpoint:` commits into meaningful commits. Ask user for granularity.
-2. `/code-review` on all changes. Additionally dispatch `references/agent-code-reviewer.md` for thorough review.
+2. `/code-review` on all changes.
+3. Update `.claude/TASKS.md` and `.claude/CHANGELOG.md`.
+
+**Large (5+ tasks):**
+1. Squash `checkpoint:` commits into meaningful commits. Ask user for granularity.
+2. `/code-review` on all changes. Additionally dispatch Code Reviewer from `references/agents.md`.
 3. **Parallel subagents** for steps 3a-3e (different files):
    - 3a. Update `.claude/CHANGELOG.md` — dated summary.
    - 3b. Update `.claude/ARCHITECTURE.md` if new files/components.
    - 3c. Update `.claude/TASKS.md` — check off items, update status.
    - 3d. `/revise-claude-md`.
-   - 3e. Dispatch `references/agent-doc-updater.md` to sync all `.claude/` docs.
+   - 3e. Dispatch Doc Updater from `references/agents.md` to sync all `.claude/` docs.
 4. Append to `.claude/LEARNINGS.md`: `## Session N — {{summary}}` with categorized rules (batch planning, code hygiene, verification). Bold rule first, context after. No narrative sections. Mark graduated rules ✅.
 5. **Doc hygiene** — if major phase completed or docs bloated, run hygiene pass from `references/doc-evolution-rules.md`.
 6. Clean up: `rm -rf "$(echo $TMPDIR)claude-code/"`, remove `qa-screenshots/` (ask user), remove leftover worktrees.

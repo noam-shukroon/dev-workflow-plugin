@@ -29,6 +29,14 @@ description: "Project workflow engine: scaffolds .claude/ docs, orchestrates age
 
 Skip files not relevant to the current work. Re-evaluate between batches.
 
+## Task Sizing
+
+Scale the workflow to match task complexity:
+
+- **1 task, ≤3 files**: Execute directly with build/test gate. Skip Phase A planning.
+- **2-4 tasks**: Standard batching, skip session splitting (no Phase A step 6).
+- **5+ tasks**: Full Phase A with dependency graph and session splitting.
+
 ## Modes
 
 Detect from context. If unclear, ask.
@@ -37,46 +45,12 @@ Detect from context. If unclear, ask.
 |------|----------|------|
 | **Scaffold** | Starting a project or adding .claude/ docs | `references/mode-scaffold.md` |
 | **Execute** | Given a batch of tasks to implement | `references/mode-execute.md` |
-| **Handoff** | Preparing for a session break | See below |
-| **Resume** | Returning to a project after a break | See below |
+| **Handoff** | Preparing for a session break | `references/mode-handoff.md` |
+| **Resume** | Returning to a project after a break | `references/mode-resume.md` |
 | **Audit** | Checking documentation health | `references/mode-audit.md` |
 | **Upgrade** | Upgrading .claude/ docs to latest plugin templates | `references/mode-upgrade.md` |
 
-After detecting the mode, read **only** that mode's reference file (for Scaffold/Execute/Audit/Upgrade), then follow its instructions.
-
-## Mode: Handoff
-
-1. Read `.claude/TASKS.md` for current status.
-2. Run `git status` and `git diff --stat` for uncommitted work.
-3. Generate handoff prompt:
-```
-Read CLAUDE.md first, then relevant .claude/ files per routing table above.
-Current status: {{last completed}}
-Next up: {{next tasks}}
-Blockers: {{unresolved decisions}}
-Uncommitted: {{modified files or "none"}}
-Context: {{session decisions not yet in docs}}
-```
-4. Update TASKS.md with latest status.
-5. Update CHANGELOG.md if doc changes were made.
-
-## Mode: Resume
-
-1. Read `.claude/TASKS.md` for last status and next steps.
-2. `git log` since last CHANGELOG.md entry date. Summarize: commits, branches/PRs, new/deleted files.
-3. Check for drift: ARCHITECTURE.md vs actual file tree, new deps not in docs, uncommitted/stashed changes.
-
-Run steps 1-3 as parallel subagents.
-
-4. Present briefing:
-```
-Since last session ({{date}}):
-- {{N}} commits, {{N}} files changed
-- New: {{files/deps}}
-- Drift: {{doc/code mismatches}}
-- Next up: {{from TASKS.md}}
-```
-5. Fix small drift immediately. Flag larger updates for user decision.
+After detecting the mode, read **only** that mode's reference file, then follow its instructions.
 
 ## On-demand references
 
@@ -95,10 +69,6 @@ Loaded by mode instructions — do not read speculatively.
 | `references/rules-go.md` | Scaffold (Go conventions) |
 | `references/rules-rust.md` | Scaffold (Rust conventions) |
 | `references/rules-python.md` | Scaffold (Python conventions) |
-| `references/agent-code-reviewer.md` | Audit, Execute Phase B |
-| `references/agent-security-reviewer.md` | Audit, Execute Phase B |
-| `references/agent-build-resolver.md` | Execute Phase B (build failures) |
-| `references/agent-performance-optimizer.md` | Audit, Execute Phase B |
-| `references/agent-doc-updater.md` | Execute Phase D, Audit |
+| `references/agents.md` | Execute, Audit (role-based agent dispatch) |
 | `references/doc-evolution-rules.md` | Execute wrap-up, Audit |
 | `.claude/LEARNINGS.md` | Execute (Phase A, if exists) |

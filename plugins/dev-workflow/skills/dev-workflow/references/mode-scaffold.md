@@ -104,15 +104,7 @@ Skip for minimal scaffold size.
 
 ## Step 5: Generate agent definitions (full scaffold only)
 
-Copy role-based agent definitions into the project for use with `/audit` and execute mode:
-
-| Agent | Reference |
-|-------|-----------|
-| Code Reviewer | `references/agent-code-reviewer.md` |
-| Security Reviewer | `references/agent-security-reviewer.md` |
-| Build Resolver | `references/agent-build-resolver.md` |
-| Performance Optimizer | `references/agent-performance-optimizer.md` |
-| Doc Updater | `references/agent-doc-updater.md` |
+Copy role-based agent definitions into the project for use with `/audit` and execute mode. All agents are defined in `references/agents.md`.
 
 ## Step 6: Optional PRD generation
 

@@ -60,15 +60,10 @@ Warn on findings but do not block.
 
 ## Git Safety
 
-Before any git operation:
+Git safety rules from dev-workflow defaults apply. Additionally:
 
-1. Run `git status` and `git branch` — confirm:
-   - Which branch you're on
-   - What will be committed
-   - No `.env*` files are staged (unstage them if so)
-2. **Never create a new branch.** Push to the current branch only.
-3. **Never force push.**
-4. If uncommitted changes exist that aren't part of this ship, ask the user before proceeding.
+1. Confirm what will be committed — no `.env*` files staged (unstage if so).
+2. If uncommitted changes exist that aren't part of this ship, ask the user before proceeding.
 
 ## Commit
 
@@ -83,9 +78,16 @@ Before any git operation:
 2. If no upstream is set, run `git push -u origin <current-branch>`.
 3. Never push to a different branch than the one you're on.
 
-## Post-push: PR Creation (optional)
+## Post-push
 
-After a successful push, offer to create a pull request:
+### CI Monitoring
+After push, if CI is detectable (`gh run list --branch <current-branch> --limit 1`):
+- Wait 60s, check status with `gh run view`.
+- If failing: warn user with failing check name and suggest `git revert HEAD`.
+- If pending after 60s: report status and move on.
+
+### PR Creation (optional)
+Offer to create a pull request:
 
 1. Ask: "Create a PR for this push?"
 2. If yes:
@@ -102,5 +104,6 @@ Shipped to: {{branch}}
 Commit: {{hash}} — {{message}}
 Files: {{count}} changed (+{{insertions}}/-{{deletions}})
 Pre-flight: ✅ build | ✅ types | ✅ lint | ✅ tests | {{⚠️/✅}} security | {{⚠️/✅}} diff
+CI: {{status or "not detected"}}
 {{PR: url (if created)}}
 ```
